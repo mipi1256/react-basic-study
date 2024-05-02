@@ -5,13 +5,13 @@ const Hello = (props) => {
   console.log('Hello Component!');
   console.log('props', props);
   return (
-    <Card className="rectangle">
+    <Card className='rectangle'>
       <div>
-        {props.children}  
+        {props.children}
         Hello React!
       </div>
     </Card>
-  )
-}
+  );
+};
 
 export default Hello;
