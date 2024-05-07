@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import './ExpenseForm.css';
 
-const ExpenseForm = ({ onSaveExpense }) => {
+const ExpenseForm = ({ onSaveExpense, onToggle }) => {
   const [userInput, setUserInput] = useState({
     title: '',
     price: '',
     date: '',
   });
+
+  const cancelInsertHandler = () => onToggle();
 
   const titleChangeHandler = (e) => {
     setUserInput((prevUserInput) => {
@@ -85,6 +87,9 @@ const ExpenseForm = ({ onSaveExpense }) => {
         </div>
       </div>
       <div className='new-expense__actions'>
+        <button type='button' onClick={cancelInsertHandler}>
+          Cancel
+        </button>
         <button type='submit'>Add Expense</button>
       </div>
     </form>
