@@ -4,11 +4,11 @@ import CourseItem from './CourseItem';
 
 const CourseList = ({ items, onDelete }) => {
   return (
-    <ul className='goal-list'>
+    <CourseUl>
       {items.map((item) => {
         return <CourseItem key={item.id} item={item} onDelete={onDelete} />;
       })}
-    </ul>
+    </CourseUl>
   );
 };
 
