@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import './Button.css';
+//import styled from 'styled-components';
+import styles from './Button.module.css';
 
 // const Button = styled.button`
 //   font: inherit;
@@ -10,9 +10,11 @@ import './Button.css';
 //   background: #8b005d;
 //   box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
 //   cursor: pointer;
+
 //   &:focus {
 //     outline: none;
 //   }
+
 //   &:hover,
 //   &:active {
 //     background: #ac0e77;
@@ -21,16 +23,14 @@ import './Button.css';
 //   }
 // `;
 
-// // const Button = ({ type, onClick, children }) => {
-// //   return (
-// //     <button type={type} onClick={onClick} className="button">
-// //       {children}
-// //     </button>
-// //   );
-// // };
-const Button = ({ type, onClick, children }) => {
+const Button = ({ type, onClick, children, className, disabled }) => {
   return (
-    <button type={type} onClick={onClick} className='button'>
+    <button
+      type={type}
+      onClick={onClick}
+      className={`${styles.button} ${className}`}
+      disabled={disabled}
+    >
       {children}
     </button>
   );
