@@ -31,7 +31,7 @@ const ModalOverlay = ({ title, message, onConfirm }) => {
 const ErrorModal = ({ title, message, onConfirm }) => {
   return (
     <>
-      < {ReactDOM.createPortal(
+      {ReactDOM.createPortal(
         <BackDrop onConfirm={onConfirm} />,
         document.getElementById('backdrop-root'),
       )}
