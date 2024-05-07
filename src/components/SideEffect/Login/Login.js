@@ -14,10 +14,6 @@ import Button from '../../UI/Button/Button';
   return: 관리할 상태값들을 반환
 */
 const emailReducer = (state, action) => {
-  console.log('email reducer called!!!');
-  console.log('state: ', state);
-  console.log('action: ', action);
-
   // dispatch 함수가 전달한 액션 객체의 타입에 따라 변경할 상태값을 반환.
   if (action.type === 'USER_INPUT') {
     return {
@@ -28,6 +24,20 @@ const emailReducer = (state, action) => {
     return {
       value: state.value,
       isValid: state.value.includes('@'),
+    };
+  }
+};
+
+const passwordReducer = (state, action) => {
+  if (action.type === 'USER_INPUT') {
+    return {
+      value: action.val,
+      isValid: action.val.trim().length > 6,
+    };
+  } else if (action.type === 'INPUT_VALIDATE') {
+    return {
+      value: state.value,
+      isValid: state.value.trim().length > 6,
     };
   }
 };
@@ -45,10 +55,11 @@ const Login = ({ onLogin }) => {
     isValid: null,
   });
 
-  // 패스워드 입력값을 저장
-  const [enteredPassword, setEnteredPassword] = useState('');
-  // 패스워드 입력이 정상적인지 확인
-  const [passwordIsValid, setPasswordIsValid] = useState();
+  const [pwState, dispatchPw] = useReducer(passwordReducer, {
+    value: '',
+    isValid: null,
+  });
+
   // 이메일, 패스워드가 둘 다 동시에 정상적인 상태인지 확인
   const [formIsValid, setFormIsValid] = useState(false);
 
@@ -56,6 +67,7 @@ const Login = ({ onLogin }) => {
   // 상태값이 필요하다면 -> reducer에서 제공되는 상태값을 활용.
   // emailState에서 isValid 프로퍼티를 디스트럭처링함 (프로퍼티로 바로 사용 x)
   const { isValid: emailIsValid } = emailState;
+  const { isValid: pwIsValid } = pwState;
 
   // 입력란(이메일, 비밀번호)을 모두 체크하여 form의 버튼 disabled를 해제하는
   // 상태변수 formIsValid의 사이드 이펙트를 처리하는 영역
@@ -64,7 +76,7 @@ const Login = ({ onLogin }) => {
     // 1초 이내에 새로운 입력값이 들어옴 -> 상태 변경 -> 재 렌더링이 진행되면서 useEffect가 또 호출됨.
     const timer = setTimeout(() => {
       console.log('useEffect called in Login.js!');
-      setFormIsValid(emailIsValid && enteredPassword.trim().length > 6);
+      setFormIsValid(emailIsValid && pwIsValid);
     }, 1000);
 
     // cleanup 함수 - 컴포넌트가 업데이트 되거나 없어지기 직전에 실행.
@@ -75,7 +87,7 @@ const Login = ({ onLogin }) => {
     };
 
     // 의존성 배열에 상태변수를 넣어주면 그 상태변수가 바뀔 때마다 useEffect가 재실행됨.
-  }, [emailIsValid, enteredPassword]);
+  }, [emailIsValid, pwIsValid]);
 
   const emailChangeHandler = (e) => {
     // reducer의 상태 변경은 dispatch 함수를 통해서 처리
@@ -88,7 +100,10 @@ const Login = ({ onLogin }) => {
   };
 
   const passwordChangeHandler = (e) => {
-    setEnteredPassword(e.target.value);
+    dispatchPw({
+      type: 'USER_INPUT',
+      val: e.target.value,
+    });
   };
 
   const validateEmailHandler = () => {
@@ -98,12 +113,14 @@ const Login = ({ onLogin }) => {
   };
 
   const validatePasswordHandler = () => {
-    setPasswordIsValid(enteredPassword.trim().length > 6);
+    dispatchPw({
+      type: 'INPUT_VALIDATE',
+    });
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
-    onLogin(emailState.value, enteredPassword);
+    onLogin(emailState.value, pwState.value);
   };
 
   return (
@@ -122,15 +139,13 @@ const Login = ({ onLogin }) => {
           />
         </div>
         <div
-          className={`${styles.control} ${
-            !passwordIsValid ? styles.invalid : ''
-          }`}
+          className={`${styles.control} ${!pwIsValid ? styles.invalid : ''}`}
         >
           <label htmlFor='password'>Password</label>
           <input
             type='password'
             id='password'
-            value={enteredPassword}
+            value={pwState.value}
             onChange={passwordChangeHandler}
             onBlur={validatePasswordHandler}
           />
